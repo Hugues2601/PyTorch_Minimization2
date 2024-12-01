@@ -194,8 +194,10 @@ if __name__ == "__main__":
     }
 
     # Calibrate the model
-    calibrated_params = calibrate(S0, market_prices, K, T, r, initial_guess, epochs=1000, lr=0.01)
+    calibrated_params = calibrate(S0, market_prices, K, T, r, initial_guess, epochs=30, lr=0.01)
 
     print("Calibrated Parameters:")
     print(calibrated_params)
+
+
 
