@@ -8,6 +8,7 @@ assert torch.cuda.is_available(), "CUDA is not available"
 device = torch.device('cuda')
 
 
+
 def heston_cf(phi, S0, T, r, kappa, v0, theta, sigma, rho):
     # Ensure that phi is a torch tensor on the GPU
     if not isinstance(phi, torch.Tensor):
