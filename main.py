@@ -42,6 +42,7 @@ def heston_cf(phi, S0, T, r, kappa, v0, theta, sigma, rho):
 
 
 
+
 def heston_price(S0, K, T, r, kappa, v0, theta, sigma, rho):
     # Ensure that S0, K, T, and r are tensors on the correct device and type
     # Avoid re-creating tensors for parameters that require gradients
