@@ -4,15 +4,15 @@ from config import *
 def heston_cf(phi, S0, T, r, kappa, v0, theta, sigma, rho):
     # Ensure that phi is a torch tensor on the GPU
     if not isinstance(phi, torch.Tensor):
-        phi = torch.tensor(phi, dtype=torch.complex128, device=device)
+        phi = torch.tensor(phi, dtype=torch.complex128, device=CONFIG.device)
     else:
-        phi = phi.to(device).type(torch.complex128)
+        phi = phi.to(CONFIG.device).type(torch.complex128)
 
-    # Ensure that S0, T, and r are tensors on the correct device and type
+    # Ensure that S0, T, and r are tensors on the correct CONFIG.device and type
     # Avoid re-creating tensors for parameters that require gradients
-    S0 = S0.to(device).type(torch.float64)
-    T = T.to(device).type(torch.float64)
-    r = r.to(device).type(torch.float64)
+    S0 = S0.to(CONFIG.device).type(torch.float64)
+    T = T.to(CONFIG.device).type(torch.float64)
+    r = r.to(CONFIG.device).type(torch.float64)
     # Parameters kappa, v0, theta, sigma, rho are already tensors with requires_grad=True
 
     a = -0.5 * phi ** 2 - 0.5 * 1j * phi
@@ -37,21 +37,21 @@ def heston_cf(phi, S0, T, r, kappa, v0, theta, sigma, rho):
 
 
 def heston_price(S0, K, T, r, kappa, v0, theta, sigma, rho):
-    # Ensure that S0, K, T, and r are tensors on the correct device and type
+    # Ensure that S0, K, T, and r are tensors on the correct CONFIG.device and type
     # Avoid re-creating tensors for parameters that require gradients
-    S0 = S0.to(device).type(torch.float64)
-    K = K.to(device).type(torch.float64)
-    T = T.to(device).type(torch.float64)
-    r = r.to(device).type(torch.float64)
+    S0 = S0.to(CONFIG.device).type(torch.float64)
+    K = K.to(CONFIG.device).type(torch.float64)
+    T = T.to(CONFIG.device).type(torch.float64)
+    r = r.to(CONFIG.device).type(torch.float64)
     # Parameters kappa, v0, theta, sigma, rho are already tensors with requires_grad=True
 
     params = (S0, T, r, kappa, v0, theta, sigma, rho)
 
     def integrand_P1(phi, K_i, T_i):
         # Define 1j as a torch tensor
-        one_j = torch.tensor(1j, dtype=torch.complex128, device=device)
+        one_j = torch.tensor(1j, dtype=torch.complex128, device=CONFIG.device)
         # Ensure phi is a torch tensor
-        phi = phi.to(device).type(torch.complex128)
+        phi = phi.to(CONFIG.device).type(torch.complex128)
 
         numerator = heston_cf(phi - one_j, S0, T_i, r, kappa, v0, theta, sigma, rho)
         denominator = heston_cf(-one_j, S0, T_i, r, kappa, v0, theta, sigma, rho) * (
@@ -61,9 +61,9 @@ def heston_price(S0, K, T, r, kappa, v0, theta, sigma, rho):
 
     def integrand_P2(phi, K_i, T_i):
         # Define 1j as a torch tensor
-        one_j = torch.tensor(1j, dtype=torch.complex128, device=device)
+        one_j = torch.tensor(1j, dtype=torch.complex128, device=CONFIG.device)
         # Ensure phi is a torch tensor
-        phi = phi.to(device).type(torch.complex128)
+        phi = phi.to(CONFIG.device).type(torch.complex128)
 
         numerator = heston_cf(phi, S0, T_i, r, kappa, v0, theta, sigma, rho)
         denominator = one_j * phi * K_i ** (one_j * phi)
@@ -71,7 +71,7 @@ def heston_price(S0, K, T, r, kappa, v0, theta, sigma, rho):
 
     umax = 50  # upper limit for integration
     n_points = 500  # number of points for integration grid
-    phi_values = torch.linspace(1e-5, umax, n_points, device=device)  # avoid phi=0 to prevent singularities
+    phi_values = torch.linspace(1e-5, umax, n_points, device=CONFIG.device)  # avoid phi=0 to prevent singularities
 
     # Initialize lists to store P1 and P2 values
     P1_list = []
@@ -87,7 +87,7 @@ def heston_price(S0, K, T, r, kappa, v0, theta, sigma, rho):
         dx = (umax - 1e-5) / (n_points - 1)
 
         # Simpson's rule coefficients
-        weights = torch.ones(n_points, device=device)
+        weights = torch.ones(n_points, device=CONFIG.device)
         weights[1:-1:2] = 4
         weights[2:-2:2] = 2
         weights = weights * dx / 3

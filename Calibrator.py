@@ -1,22 +1,22 @@
 import torch
-from config import *
+from config import CONFIG
 from HestonModels.VanillaFormeAnalytique import heston_price
 
 
 def calibrate(S0, market_prices, K, T, r, initial_guess, epochs=30, lr=0.01):
     # Ensure that all inputs are torch tensors on the GPU
-    S0 = torch.tensor(S0, dtype=torch.float64, device=device)
-    K = torch.tensor(K, dtype=torch.float64, device=device)
-    T = torch.tensor(T, dtype=torch.float64, device=device)
-    market_prices = torch.tensor(market_prices, dtype=torch.float64, device=device)
-    r = torch.tensor(r, dtype=torch.float64, device=device)
+    S0 = torch.tensor(S0, dtype=torch.float64, device=CONFIG.device)
+    K = torch.tensor(K, dtype=torch.float64, device=CONFIG.device)
+    T = torch.tensor(T, dtype=torch.float64, device=CONFIG.device)
+    market_prices = torch.tensor(market_prices, dtype=torch.float64, device=CONFIG.device)
+    r = torch.tensor(r, dtype=torch.float64, device=CONFIG.device)
 
     # Initialize parameters to optimize
-    kappa = torch.tensor(initial_guess['kappa'], dtype=torch.float64, device=device, requires_grad=True)
-    v0 = torch.tensor(initial_guess['v0'], dtype=torch.float64, device=device, requires_grad=True)
-    theta = torch.tensor(initial_guess['theta'], dtype=torch.float64, device=device, requires_grad=True)
-    sigma = torch.tensor(initial_guess['sigma'], dtype=torch.float64, device=device, requires_grad=True)
-    rho = torch.tensor(initial_guess['rho'], dtype=torch.float64, device=device, requires_grad=True)
+    kappa = torch.tensor(initial_guess['kappa'], dtype=torch.float64, device=CONFIG.device, requires_grad=True)
+    v0 = torch.tensor(initial_guess['v0'], dtype=torch.float64, device=CONFIG.device, requires_grad=True)
+    theta = torch.tensor(initial_guess['theta'], dtype=torch.float64, device=CONFIG.device, requires_grad=True)
+    sigma = torch.tensor(initial_guess['sigma'], dtype=torch.float64, device=CONFIG.device, requires_grad=True)
+    rho = torch.tensor(initial_guess['rho'], dtype=torch.float64, device=CONFIG.device, requires_grad=True)
 
     # Set up optimizer
     optimizer = torch.optim.Adam([kappa, v0, theta, sigma, rho], lr=lr)

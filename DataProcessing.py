@@ -1,5 +1,19 @@
 from datetime import datetime
 import pandas as pd
+import requests
+import json
+from config import CONFIG
+
+def api_retriever():
+    response = requests.get(CONFIG.url)
+    # Vérifier le statut de la requête
+    if response.status_code == 200:
+        # Analyser les données JSON
+        data = response.json()
+        print(data)
+    else:
+        print(f"Erreur lors de la requête : HTTP {response.status_code}")
+
 def data_processing(df):
 
     df['expiration'] = pd.to_datetime(df['expiration'])
