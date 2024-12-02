@@ -40,12 +40,15 @@ def data_processing(df):
 
     df['expiration'] = pd.to_datetime(df['expiration'])
 
-    # Calculer le temps restant en années
+
     today = datetime.today()
     df['TimeToMaturity'] = df['expiration'].apply(lambda x: (x - today).days / 365)
-    mp = df.iloc[:, 0].tolist()
-    T = df.iloc[:, -1].tolist()
-    IV = df.iloc[:, 2].tolist()
-    K = df.iloc[:, 3].tolist()
-
-    return df, mp, T, IV, K
+    df = df[(df["implied_volatility"] < 0.8) & (df['last'] > 2) & (df["open_interest"] > 10) & (df["TimeToMaturity"]>0.2)]
+    df = df.reset_index(drop=True)
+    return df
+    # mp = df.iloc[:, 0].tolist()
+    # T = df.iloc[:, -1].tolist()
+    # IV = df.iloc[:, 2].tolist()
+    # K = df.iloc[:, 3].tolist()
+    #
+    # return df, mp, T, IV, K

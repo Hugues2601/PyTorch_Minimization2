@@ -5,16 +5,11 @@ from config import CONFIG
 import torch
 
 def run():
-    df = api_retriever()
-    data_to_csv(df)
-    print("all good")
-
+    file = data_processing(CONFIG.df)
+    print(file)
 
 if __name__ == "__main__":
     run()
-
-
-
 
     # # Example data
     # file, market_prices, T, IV, K = data_processing(CONFIG.df)
