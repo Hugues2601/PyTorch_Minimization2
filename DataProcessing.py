@@ -45,10 +45,9 @@ def data_processing(df):
     df['TimeToMaturity'] = df['expiration'].apply(lambda x: (x - today).days / 365)
     df = df[(df["implied_volatility"] < 0.8) & (df['last'] > 2) & (df["open_interest"] > 10) & (df["TimeToMaturity"]>0.2)]
     df = df.reset_index(drop=True)
-    return df
-    # mp = df.iloc[:, 0].tolist()
-    # T = df.iloc[:, -1].tolist()
-    # IV = df.iloc[:, 2].tolist()
-    # K = df.iloc[:, 3].tolist()
-    #
-    # return df, mp, T, IV, K
+    mp = df.iloc[:, 0].tolist()
+    T = df.iloc[:, -1].tolist()
+    IV = df.iloc[:, 2].tolist()
+    K = df.iloc[:, 3].tolist()
+
+    return df, mp, T, IV, K
