@@ -3,7 +3,7 @@ from config import CONFIG
 from HestonModels.VanillaFormeAnalytique import heston_price
 
 
-def calibrate(S0, market_prices, K, T, r, initial_guess, max_epochs=300, lr=0.01, loss_threshold=6):
+def calibrate(S0, market_prices, K, T, r, initial_guess, max_epochs=300, lr=0.01, loss_threshold=2.3):
     # Ensure that all inputs are torch tensors on the GPU
     S0 = torch.tensor(S0, dtype=torch.float64, device=CONFIG.device)
     K = torch.tensor(K, dtype=torch.float64, device=CONFIG.device)
