@@ -14,7 +14,7 @@ if __name__ == "__main__":
     #
     # Example data
     file, market_prices, T, IV, K = data_processing(CONFIG.df)
-    S0 = 207
+    S0 = 603
     r = 0.0406
 
     # Initial guesses for parameters

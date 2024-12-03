@@ -27,75 +27,69 @@ def heston_cf(phi, S0, T, r, kappa, v0, theta, sigma, rho):
     return cf
 
 
-
-
 def heston_price(S0, K, T, r, kappa, v0, theta, sigma, rho):
-    # Ensure that S0, K, T, and r are tensors on the correct CONFIG.device and type
-    # Avoid re-creating tensors for parameters that require gradients
-    S0 = S0.to(CONFIG.device).type(torch.float64)
-    K = K.to(CONFIG.device).type(torch.float64)
-    T = T.to(CONFIG.device).type(torch.float64)
-    r = r.to(CONFIG.device).type(torch.float64)
-    # Parameters kappa, v0, theta, sigma, rho are already tensors with requires_grad=True
+    """
+    Calcule le prix d'une option européenne selon le modèle de Heston en utilisant PyTorch.
 
-    params = (S0, T, r, kappa, v0, theta, sigma, rho)
+    Args:
+        S0 (torch.Tensor): Prix initial de l'actif sous-jacent (scalaire).
+        K (torch.Tensor): Prix d'exercice de l'option (tenseur 1D).
+        T (torch.Tensor): Maturité de l'option (tenseur 1D, même taille que K).
+        r (torch.Tensor): Taux d'intérêt sans risque (scalaire).
+        kappa (torch.Tensor): Taux de retour à la moyenne de la variance (scalaire).
+        v0 (torch.Tensor): Variance initiale (scalaire).
+        theta (torch.Tensor): Variance à long terme (scalaire).
+        sigma (torch.Tensor): Volatilité de la variance (scalaire).
+        rho (torch.Tensor): Corrélation entre le mouvement brownien de l'actif et celui de la variance (scalaire).
 
-    def integrand_P1(phi, K_i, T_i):
-        # Define 1j as a torch tensor
-        one_j = torch.tensor(1j, dtype=torch.complex128, device=CONFIG.device)
-        # Ensure phi is a torch tensor
-        phi = phi.to(CONFIG.device).type(torch.complex128)
+    Returns:
+        torch.Tensor: Prix de l'option (tenseur 1D, même taille que K).
+    """
 
-        numerator = heston_cf(phi - one_j, S0, T_i, r, kappa, v0, theta, sigma, rho)
-        denominator = heston_cf(-one_j, S0, T_i, r, kappa, v0, theta, sigma, rho) * (
-            one_j * phi * K_i ** (one_j * phi)
-        )
-        return torch.real(numerator / denominator)
+    # Vérification de la taille de K et T
+    assert K.dim() == 1, "K doit être un tenseur 1D"
+    assert T.dim() == 1, "T doit être un tenseur 1D"
+    assert len(K) == len(T), "K et T doivent avoir la même taille"
 
-    def integrand_P2(phi, K_i, T_i):
-        # Define 1j as a torch tensor
-        one_j = torch.tensor(1j, dtype=torch.complex128, device=CONFIG.device)
-        # Ensure phi is a torch tensor
-        phi = phi.to(CONFIG.device).type(torch.complex128)
+    # Paramètres d'intégration
+    umax = 50  # Limite supérieure de l'intégration
+    n = 100  # Nombre de points (doit être impair pour Simpson)
+    if n % 2 == 0:
+        n += 1  # Assurez-vous que n est impair
 
-        numerator = heston_cf(phi, S0, T_i, r, kappa, v0, theta, sigma, rho)
-        denominator = one_j * phi * K_i ** (one_j * phi)
-        return torch.real(numerator / denominator)
+    # Grille pour φ
+    phi_values = torch.linspace(1e-5, umax, n, device=K.device)
+    du = (umax - 1e-5) / (n - 1)  # Pas d'intégration
 
-    umax = 50  # upper limit for integration
-    n_points = 500  # number of points for integration grid
-    phi_values = torch.linspace(1e-5, umax, n_points, device=CONFIG.device)  # avoid phi=0 to prevent singularities
+    # Extension de phi_values pour correspondre à la taille de K
+    phi_values = phi_values.unsqueeze(1).repeat(1, len(K))
 
-    # Initialize lists to store P1 and P2 values
-    P1_list = []
-    P2_list = []
-    for i in range(len(K)):
-        K_i = K[i]
-        T_i = T[i]
+    # Calcul de l'intégrale en utilisant la vectorisation de PyTorch
+    factor1 = torch.exp(-1j * phi_values * torch.log(K))
+    denominator = 1j * phi_values
 
-        integrand_P1_values = integrand_P1(phi_values, K_i, T_i)
-        integrand_P2_values = integrand_P2(phi_values, K_i, T_i)
+    # Calcul de P1
+    cf1 = heston_cf(phi_values - 1j, S0, T, r, kappa, v0, theta, sigma, rho) / heston_cf(-1j, S0, T, r, kappa, v0, theta, sigma, rho)
+    temp1 = factor1 * cf1 / denominator
+    integrand_P1_values = 1 / torch.pi * torch.real(temp1)
 
-        # Implement Simpson's rule in PyTorch
-        dx = (umax - 1e-5) / (n_points - 1)
+    # Calcul de P2
+    cf2 = heston_cf(phi_values, S0, T, r, kappa, v0, theta, sigma, rho)
+    temp2 = factor1 * cf2 / denominator
+    integrand_P2_values = 1 / torch.pi * torch.real(temp2)
 
-        # Simpson's rule coefficients
-        weights = torch.ones(n_points, device=CONFIG.device)
-        weights[1:-1:2] = 4
-        weights[2:-2:2] = 2
-        weights = weights * dx / 3
+    # Règle de Simpson (vectorisée)
+    weights = torch.ones(n, device=K.device)
+    weights[1:-1:2] = 4  # Poids pour les points impairs
+    weights[2:-2:2] = 2  # Poids pour les points pairs
+    weights *= du / 3    # Facteur de Simpson
+    weights = weights.unsqueeze(1).repeat(1, len(K))  # Extension de weights
 
-        integral_P1 = torch.sum(weights * integrand_P1_values)
-        integral_P2 = torch.sum(weights * integrand_P2_values)
+    integral_P1 = torch.sum(weights * integrand_P1_values, dim=0)
+    integral_P2 = torch.sum(weights * integrand_P2_values, dim=0)
 
-        P1 = 0.5 + 1 / torch.pi * integral_P1
-        P2 = 0.5 + 1 / torch.pi * integral_P2
-
-        P1_list.append(P1)
-        P2_list.append(P2)
-
-    P1 = torch.stack(P1_list)
-    P2 = torch.stack(P2_list)
-
+    # Calcul des probabilités et du prix
+    P1 = torch.tensor(0.5, device=K.device) + integral_P1
+    P2 = torch.tensor(0.5, device=K.device) + integral_P2
     price = S0 * P1 - torch.exp(-r * T) * K * P2
     return price
