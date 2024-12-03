@@ -3,7 +3,7 @@ from config import CONFIG
 from HestonModels.VanillaFormeAnalytique import heston_price
 
 
-def calibrate(S0, market_prices, K, T, r, initial_guess, epochs=30, lr=0.01):
+def calibrate(S0, market_prices, K, T, r, initial_guess, max_epochs=300, lr=0.01, loss_threshold=6):
     # Ensure that all inputs are torch tensors on the GPU
     S0 = torch.tensor(S0, dtype=torch.float64, device=CONFIG.device)
     K = torch.tensor(K, dtype=torch.float64, device=CONFIG.device)
@@ -21,19 +21,24 @@ def calibrate(S0, market_prices, K, T, r, initial_guess, epochs=30, lr=0.01):
     # Set up optimizer
     optimizer = torch.optim.Adam([kappa, v0, theta, sigma, rho], lr=lr)
 
-    for epoch in range(epochs):
+    for epoch in range(max_epochs):
         optimizer.zero_grad()
         # Compute model prices
         model_prices = heston_price(S0, K, T, r, kappa, v0, theta, sigma, rho)
         # Compute loss (Mean Squared Error)
-        loss = torch.mean((model_prices - market_prices) ** 2)
+        loss = torch.sqrt(torch.mean((model_prices - market_prices) ** 2))
         # Backpropagation
         loss.backward()
         # Update parameters
         optimizer.step()
+
         # Print progress
-        if epoch % 1 == 0:
-            print(f"Epoch {epoch}, Loss: {loss.item()}")
+        print(f"Epoch {epoch}, Loss: {loss.item()}")
+
+        # Check for convergence
+        if loss.item() < loss_threshold:
+            print(f"Converged at epoch {epoch} with loss {loss.item()}")
+            break
 
     # Return the calibrated parameters
     calibrated_params = {
@@ -44,4 +49,5 @@ def calibrate(S0, market_prices, K, T, r, initial_guess, epochs=30, lr=0.01):
         'rho': rho.item()
     }
     return calibrated_params
+
 

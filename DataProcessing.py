@@ -43,7 +43,7 @@ def data_processing(df):
 
     today = datetime.today()
     df['TimeToMaturity'] = df['expiration'].apply(lambda x: (x - today).days / 365)
-    df = df[(df["implied_volatility"] < 0.8) & (df['last'] > 2) & (df["open_interest"] > 10) & (df["TimeToMaturity"]>0.2)]
+    df = df[(df["implied_volatility"] < 0.8) & (df['last'] > 5) & (df["open_interest"] > 20) & (df["TimeToMaturity"]>0.2)]
     df = df.reset_index(drop=True)
     mp = df.iloc[:, 0].tolist()
     T = df.iloc[:, -1].tolist()
@@ -51,3 +51,15 @@ def data_processing(df):
     K = df.iloc[:, 3].tolist()
 
     return df, mp, T, IV, K
+
+def get_treasury_yield():
+    response = requests.get(url=CONFIG.url_t_yield, params=CONFIG.params_t_yield)
+    data = response.json()
+
+    if "data" in data:
+        # Récupérer le dernier taux disponible
+        last_yield = float(data["data"][-1]["value"])
+        return last_yield / 100  # Convertir en format décimal
+    else:
+        print("Erreur : Vérifiez vos paramètres ou votre clé API.")
+        return None
