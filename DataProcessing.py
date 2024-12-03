@@ -24,14 +24,14 @@ def data_to_csv(df):
     options_df = df[['last', 'expiration', 'implied_volatility', 'strike', 'open_interest', 'type']]
 
     # Créer un second DataFrame avec les colonnes delta, gamma, theta, vega et rho
-    greeks_df = df[['delta', 'gamma', 'theta', 'vega', 'rho']]
+    # greeks_df = df[['delta', 'gamma', 'theta', 'vega', 'rho']]
 
     options_df_calls = options_df[options_df['type']=="call"]
     options_df_puts = options_df[options_df['type']=="put"]
 
     os.makedirs(CONFIG.save_path, exist_ok=True)
 
-    greeks_df.to_csv(os.path.join(CONFIG.save_path, f"{CONFIG.todaydate}_{CONFIG.apikey}_greeks_df.csv"), index=False)
+    # greeks_df.to_csv(os.path.join(CONFIG.save_path, f"{CONFIG.todaydate}_{CONFIG.apikey}_greeks_df.csv"), index=False)
     options_df_calls.to_csv(os.path.join(CONFIG.save_path, f"{CONFIG.todaydate}_{CONFIG.apikey}_calls.csv"), index=False)
     options_df_calls.to_csv(os.path.join(CONFIG.save_path, f"{CONFIG.todaydate}_{CONFIG.apikey}_put.csv"), index=False)
 

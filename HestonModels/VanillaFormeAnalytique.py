@@ -20,15 +20,8 @@ def heston_cf(phi, S0, T, r, kappa, v0, theta, sigma, rho):
     discriminant = torch.sqrt(b ** 2 - 2 * sigma ** 2 * a)
     g = (b - discriminant) / (b + discriminant)
 
-    C = (
-        kappa * (b - discriminant) / sigma ** 2 * T
-        - 2 / sigma ** 2 * torch.log((1 - g * torch.exp(-discriminant * T)) / (1 - g))
-    )
-    D = (
-        (b - discriminant) / sigma ** 2
-        * (1 - torch.exp(-discriminant * T))
-        / (1 - g * torch.exp(-discriminant * T))
-    )
+    C = (kappa * (b - discriminant) / sigma ** 2 * T- 2 / sigma ** 2 * torch.log((1 - g * torch.exp(-discriminant * T)) / (1 - g)))
+    D = ((b - discriminant) / sigma ** 2 * (1 - torch.exp(-discriminant * T)) / (1 - g * torch.exp(-discriminant * T)))
 
     cf = torch.exp(C * theta + D * v0 + 1j * phi * torch.log(S0 * torch.exp(r * T)))
     return cf
