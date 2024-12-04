@@ -43,7 +43,8 @@ def data_processing(df):
 
     today = datetime.today()
     df['TimeToMaturity'] = df['expiration'].apply(lambda x: (x - today).days / 365)
-    df = df[(df["implied_volatility"] < 0.8) & (df['last'] > 5) & (df["open_interest"] > 20) & (df["TimeToMaturity"]>0.2)]
+    df = df[df["type"]=="call"]
+    df = df[(df["implied_volatility"] < 2) & (df['last'] > 3) & (df["open_interest"] > 5) & (df["TimeToMaturity"]>0.2)]
     df = df.reset_index(drop=True)
     mp = df.iloc[:, 0].tolist()
     T = df.iloc[:, -1].tolist()

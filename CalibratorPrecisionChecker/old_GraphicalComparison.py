@@ -6,9 +6,9 @@ import torch
 from HestonModels.VanillaFormeAnalytique import heston_price
 
 file, market_prices, T, IV, K = data_processing(CONFIG.df)
-S0 = 207
+S0 = 603
 r = 0.406
-kappa, v0, theta, sigma, rho = 1.5174, 0.0624, 0.11678, 0.15625501, -0.925204
+kappa, v0, theta, sigma, rho = 1.9204, 0.01928, 0.193820, 0.280299, -0.580135
 
 heston_prices = []
 for i in range(len(K)):

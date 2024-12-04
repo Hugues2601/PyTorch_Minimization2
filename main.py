@@ -6,14 +6,15 @@ import torch
 import numpy as np
 
 def run():
-    file = data_to_csv(CONFIG.df)
-    print(file)
+    pass
+
 
 if __name__ == "__main__":
     # # yield_10y = get_treasury_yield()
     #
     # Example data
     file, market_prices, T, IV, K = data_processing(CONFIG.df)
+    print(f"nb d'options : {len(market_prices)}")
     S0 = 603
     r = 0.0406
 
