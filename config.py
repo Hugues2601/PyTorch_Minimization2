@@ -24,3 +24,12 @@ class CONFIG:
     save_path = r"C:\Users\hugue\Desktop\Master Thesis\Data"
     todaydate = (datetime.now()).strftime("%Y%m%d")
 
+    # Heston Vanilla model initial guess :
+    initial_guess = {
+        'kappa': 2.0,
+        'v0': 0.1,
+        'theta': 0.1,
+        'sigma': 0.2,
+        'rho': -0.5
+    }
+
