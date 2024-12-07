@@ -32,8 +32,8 @@ def data_to_csv(df):
     os.makedirs(CONFIG.save_path, exist_ok=True)
 
     # greeks_df.to_csv(os.path.join(CONFIG.save_path, f"{CONFIG.todaydate}_{CONFIG.apikey}_greeks_df.csv"), index=False)
-    options_df_calls.to_csv(os.path.join(CONFIG.save_path, f"{CONFIG.todaydate}_{CONFIG.apikey}_calls.csv"), index=False)
-    options_df_calls.to_csv(os.path.join(CONFIG.save_path, f"{CONFIG.todaydate}_{CONFIG.apikey}_put.csv"), index=False)
+    options_df_calls.to_csv(os.path.join(CONFIG.save_path, f"{CONFIG.todaydate}_{CONFIG.symbol}_calls.csv"), index=False)
+    options_df_calls.to_csv(os.path.join(CONFIG.save_path, f"{CONFIG.todaydate}_{CONFIG.symbol}_put.csv"), index=False)
 
 
 def data_processing(df):
@@ -44,7 +44,7 @@ def data_processing(df):
     today = datetime.today()
     df['TimeToMaturity'] = df['expiration'].apply(lambda x: (x - today).days / 365)
     df = df[df["type"]=="call"]
-    df = df[(df["implied_volatility"] < 2) & (df['last'] > 3) & (df["open_interest"] > 5) & (df["TimeToMaturity"]>0.2)]
+    df = df[(df["implied_volatility"] < 6) & (df['last'] > 0) & (df["open_interest"] > 0) & (df["TimeToMaturity"]>0.2)]
     df = df.reset_index(drop=True)
     mp = df.iloc[:, 0].tolist()
     T = df.iloc[:, -1].tolist()

@@ -32,8 +32,8 @@ def calibrate(S0, market_prices, K, T, r, initial_guess, max_epochs=10000, lr=0.
         # Update parameters
         optimizer.step()
 
-        # Print progress
-        print(f"Epoch {epoch}, Loss: {loss.item()}")
+        if epoch % 100 == 0:
+            print(f"Epoch {epoch}, Loss: {loss.item()}")
 
         # Check for convergence
         if loss.item() < loss_threshold:

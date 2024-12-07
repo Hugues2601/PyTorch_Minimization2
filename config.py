@@ -4,9 +4,9 @@ from datetime import datetime
 class CONFIG:
     device = "cuda"
 
-    df = pd.read_csv("C:\\Users\\hugue\\Desktop\\Master Thesis\\Data\\20241202_SPY_calls.csv")
+    df = pd.read_csv("C:\\Users\\hugue\\Desktop\\Master Thesis\\Data\\20241203_AMAZON_calls.csv")
 
-    S0 = 603
+    S0 = 207
     r = 0.0406
 
     # Alpha vantage options retrieving
