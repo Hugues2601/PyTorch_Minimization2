@@ -2,11 +2,13 @@ import numpy as np
 
 def old_heston_cf(phi, S0, T, r, kappa, v0, theta, sigma, rho):
     a = -0.5 * phi ** 2 - 0.5j * phi
+
     b = kappa - rho * sigma * 1j * phi
-    g = ((b - np.sqrt(b ** 2 - 2 * sigma ** 2 * a)) / sigma ** 2) / (
-                (b + np.sqrt(b ** 2 - 2 * sigma ** 2 * a)) / sigma ** 2)
-    C = kappa * (((b - np.sqrt(b ** 2 - 2 * sigma ** 2 * a)) / sigma ** 2) * T - 2 / sigma ** 2 * np.log(
-        (1 - g * np.exp(-np.sqrt(b ** 2 - 2 * sigma ** 2 * a) * T)) / (1 - g)))
+
+    g = ((b - np.sqrt(b ** 2 - 2 * sigma ** 2 * a)) / sigma ** 2) / ((b + np.sqrt(b ** 2 - 2 * sigma ** 2 * a)) / sigma ** 2)
+
+    C = kappa * (((b - np.sqrt(b ** 2 - 2 * sigma ** 2 * a)) / sigma ** 2) * T - 2 / sigma ** 2 * np.log((1 - g * np.exp(-np.sqrt(b ** 2 - 2 * sigma ** 2 * a) * T)) / (1 - g)))
+
     D = ((b - np.sqrt(b ** 2 - 2 * sigma ** 2 * a)) / sigma ** 2) * (
                 1 - np.exp(-np.sqrt(b ** 2 - 2 * sigma ** 2 * a) * T)) / (
                     1 - g * np.exp(-np.sqrt(b ** 2 - 2 * sigma ** 2 * a) * T))

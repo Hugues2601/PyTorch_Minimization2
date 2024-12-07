@@ -9,8 +9,10 @@ class CONFIG:
 
     # Alpha vantage options retrieving
     apikey = "UC2NJBUMF1FT83J1"
+    apikey_polygon = "yQyMsqx8zbeR_cAgp_QNx92EGsv6Atcl"
     symbol = "SPY"
     url = f"https://www.alphavantage.co/query?function=HISTORICAL_OPTIONS&symbol={symbol}&apikey={apikey}"
+    url_polygon = "https://api.polygon.io/v3/trades/options"
 
     # treasury yield retrieving parameters
     url_t_yield = f"https://www.alphavantage.co/query"

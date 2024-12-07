@@ -17,11 +17,15 @@ def heston_cf(phi, S0, T, r, kappa, v0, theta, sigma, rho):
 
     a = -0.5 * phi ** 2 - 0.5 * 1j * phi
     b = kappa - rho * sigma * 1j * phi
-    discriminant = torch.sqrt(b ** 2 - 2 * sigma ** 2 * a)
-    g = (b - discriminant) / (b + discriminant)
 
-    C = (kappa * (b - discriminant) / sigma ** 2 * T- 2 / sigma ** 2 * torch.log((1 - g * torch.exp(-discriminant * T)) / (1 - g)))
-    D = ((b - discriminant) / sigma ** 2 * (1 - torch.exp(-discriminant * T)) / (1 - g * torch.exp(-discriminant * T)))
+    g = ((b - torch.sqrt(b ** 2 - 2 * sigma ** 2 * a)) / sigma ** 2) / ((b + torch.sqrt(b ** 2 - 2 * sigma ** 2 * a)) / sigma ** 2)
+
+    C = kappa * (((b - torch.sqrt(b ** 2 - 2 * sigma ** 2 * a)) / sigma ** 2) * T - 2 / sigma ** 2 * torch.log(
+        (1 - g * torch.exp(-torch.sqrt(b ** 2 - 2 * sigma ** 2 * a) * T)) / (1 - g)))
+
+    D = ((b - torch.sqrt(b ** 2 - 2 * sigma ** 2 * a)) / sigma ** 2) * (
+                1 - torch.exp(-torch.sqrt(b ** 2 - 2 * sigma ** 2 * a) * T)) / (
+                    1 - g * torch.exp(-torch.sqrt(b ** 2 - 2 * sigma ** 2 * a) * T))
 
     cf = torch.exp(C * theta + D * v0 + 1j * phi * torch.log(S0 * torch.exp(r * T)))
     return cf
