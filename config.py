@@ -4,14 +4,14 @@ from datetime import datetime
 class CONFIG:
     device = "cuda"
 
-    df = pd.read_csv("C:\\Users\\hugue\\Desktop\\Master Thesis\\Data\\20241203_AMAZON_calls.csv")
+    df = pd.read_csv("C:\\Users\\hugue\\Desktop\\Master Thesis\\Data\\20241207_TSLA_calls.csv")
 
-    S0 = 207
+    S0 = 227
     r = 0.0406
 
     # Alpha vantage options retrieving
     apikey = "UC2NJBUMF1FT83J1"
-    symbol = "SPY"
+    symbol = "AMZN"
     url = f"https://www.alphavantage.co/query?function=HISTORICAL_OPTIONS&symbol={symbol}&apikey={apikey}"
 
     # treasury yield retrieving parameters

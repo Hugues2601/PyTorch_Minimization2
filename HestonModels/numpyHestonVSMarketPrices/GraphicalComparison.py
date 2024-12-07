@@ -7,7 +7,7 @@ from DataProcessing import data_processing
 from config import CONFIG
 
 def numpy_heston_v_market_prices():
-    file, market_prices, T, IV, K = data_processing(CONFIG.df)
+    file, market_prices, T, IV, K = data_processing(CONFIG.symbol)
     calibrated_params = Results.calibration_results
     S0 = CONFIG.S0
     r = CONFIG.r

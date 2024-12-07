@@ -32,6 +32,11 @@ def calibrate(S0, market_prices, K, T, r, initial_guess, max_epochs=10000, lr=0.
         # Update parameters
         optimizer.step()
 
+        kappa.data = torch.clamp(kappa.data, min=0.01, max=10)  # Exemple : bornes pour kappa
+        v0.data = torch.clamp(v0.data, min=0.001, max=1)
+        theta.data = torch.clamp(theta.data, min=0.001, max=1)
+        sigma.data = torch.clamp(sigma.data, min=0.01, max=5)
+
         if epoch % 100 == 0:
             print(f"Epoch {epoch}, Loss: {loss.item()}")
 

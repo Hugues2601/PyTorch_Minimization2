@@ -19,4 +19,4 @@ def write_results_to_file(calibrated_params, file_path="results.py"):
         f.writelines(updated_lines)
 
 class Results:
-    calibration_results = {'kappa': 1.461940669421291, 'v0': 0.10078570773428029, 'theta': 0.121802937587822, 'sigma': 0.2814209114742383, 'rho': -0.6707800066031391}
+    calibration_results = {'kappa': 1.997593209388519, 'v0': 0.09799082270480705, 'theta': 0.11170597551131412, 'sigma': 0.2064711617898025, 'rho': -0.5164318949237379}
