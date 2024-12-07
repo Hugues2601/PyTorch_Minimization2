@@ -6,37 +6,36 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 phi = torch.tensor(1.0, dtype=torch.complex128, device=CONFIG.device)  # Exemple : une valeur de φ
-S0 = torch.tensor(603.0, device=CONFIG.device)
-K = torch.tensor([400.0], device=CONFIG.device)  # Exemple : un prix d'exercice
+S0 = torch.tensor(207.0, device=CONFIG.device)
+K = torch.tensor([200.0], device=CONFIG.device)  # Exemple : un prix d'exercice
 T = torch.tensor([2.0], device=CONFIG.device)
-r = torch.tensor(0.05, device=CONFIG.device)
-kappa = torch.tensor(1.87600, device=CONFIG.device)
-v0 = torch.tensor(0.0154, device=CONFIG.device)
-theta = torch.tensor(0.2359, device=CONFIG.device)
-sigma = torch.tensor(0.182, device=CONFIG.device)
-rho = torch.tensor(-0.92, device=CONFIG.device)
+r = torch.tensor(0.0406, device=CONFIG.device)
+kappa = torch.tensor(1.461940669421291, device=CONFIG.device)
+v0 = torch.tensor(0.10078570773428029, device=CONFIG.device)
+theta = torch.tensor(0.121802937587822, device=CONFIG.device)
+sigma = torch.tensor(0.414209114742383, device=CONFIG.device)
+rho = torch.tensor(-0.6707800066031391, device=CONFIG.device)
 
 # Calcul de la fonction caractéristique
 value = heston_price(S0, K, T, r, kappa, v0, theta, sigma, rho)
-value_cf = heston_cf(phi, S0, T, r, kappa, v0, theta, sigma, rho)
-print("Heston torch Value:", value, value_cf)
+print("Heston torch Value:", value)
 
- # Exemple : une valeur de φ
-phi_numpy = phi.cpu().detach().numpy()
-S0_o = 603
-T_o = 2
-r_o = 0.05
-kappa_o = 1.876
-K_o = 400
-v0_o = 0.0154
-theta_o = 0.2359
-sigma_o = 0.1828
-rho_o = -0.92
-
-# Calcul de la fonction caractéristique
-cf_value = old_heston_price(S0_o, K_o, T_o, r_o, kappa_o, v0_o, theta_o, sigma_o, rho_o)
-old_cf = old_heston_cf(phi_numpy, S0_o, T_o, r_o, kappa_o, v0_o, theta_o, sigma_o, rho_o)
-print("Heston old Value:", cf_value, old_cf)
+#  # Exemple : une valeur de φ
+# phi_numpy = phi.cpu().detach().numpy()
+# S0_o = 603
+# T_o = 2
+# r_o = 0.05
+# kappa_o = 1.876
+# K_o = 400
+# v0_o = 0.0154
+# theta_o = 0.2359
+# sigma_o = 0.1828
+# rho_o = -0.92
+#
+# # Calcul de la fonction caractéristique
+# cf_value = old_heston_price(S0_o, K_o, T_o, r_o, kappa_o, v0_o, theta_o, sigma_o, rho_o)
+# old_cf = old_heston_cf(phi_numpy, S0_o, T_o, r_o, kappa_o, v0_o, theta_o, sigma_o, rho_o)
+# print("Heston old Value:", cf_value, old_cf)
 
 # import torch
 # import numpy as np

@@ -46,10 +46,10 @@ def data_processing(df):
     df = df[df["type"]=="call"]
     df = df[(df["implied_volatility"] < 6) & (df['last'] > 0) & (df["open_interest"] > 0) & (df["TimeToMaturity"]>0.2)]
     df = df.reset_index(drop=True)
-    mp = df.iloc[:, 0].tolist()
-    T = df.iloc[:, -1].tolist()
-    IV = df.iloc[:, 2].tolist()
-    K = df.iloc[:, 3].tolist()
+    mp = df['last'].tolist()
+    T = df['TimeToMaturity'].tolist()
+    IV = df['implied_volatility'].tolist()
+    K = df['strike'].tolist()
 
     return df, mp, T, IV, K
 
